@@ -1,0 +1,55 @@
+RPCW2023-Normal
+===============================================================
+Exercício 1: Emprego Científico (API de dados)
+---------------------------------------------------------------
+
+1.1 Setup
+
+    Tratamento:
+    O tratamento efetuado nos dados forncecidos foi a conversão dos campos "DataInicioContrato" e "DataFimContrato"
+    que passaram do formato "DD/MM/YYYY" para "YYYY-MM-DD", para poder utilizar como ISODate dentro do mongoDB de forma
+    a facilitar as procuras de datas
+    (Para isso foi criado um script fix_json.py que apartir do ficheiro emprego-cientifico.json 
+    cria o ficheiro emprego-cientifico-tratado.json, que foi o utilizado).
+
+    Comando de importação da coleção:
+    mongoimport -d scienceJobs -c contracts --file emprego-cientifico-tratado.json --jsonArray
+
+---------------------------------------------------------------
+1.2 Queries (warm-up)
+
+    1.Quantos contratos estão na base de dados;
+        R: db.contracts.countDocuments()
+    2.Quantos contratos foram realizados pela Universidade do Minho?
+        R: db.contracts.countDocuments({InstituicaoEnsino:"Universidade do Minho"})
+    3.Qual a lista das áreas das pessoas contratadas (ordenada alfabeticamente e sem repetições)? (AreaCNAEF)
+        R: db.contracts.distinct("AreaCNAEF").sort()
+    4.Qual a distribuição por ano dos contratos? (quantos contratos em cada ano)
+        R: db.contracts.aggregate([ { $group: { _id: { $year: { $toDate: "$DataInicioContrato" } }, count: { $sum: 1 } } }])
+    5.Qual a distribuição dos contratos por instituição?
+        R: db.contracts.aggregate([ { $group: { _id: "$NomeInstituicao", count: { $sum: 1 } } }])
+    
+---------------------------------------------------------------
+1.3 API de dados
+
+    Todas as rotas foram realizadas como pedido.
+    A rota '/contracts?inst=AAA' recebe AAA como o campo NIPCInstituicao, já que não foi especificado
+    que identificador de instituição usar, isto facilita no segundo exercio a obtenção da pagina da instituição.
+    O modelo segue exatamente a estrutura do ducomento fornecida e o controller fornece as funções interação
+    com a coleção MongoDB(como aprendido nas aulas).
+
+===============================================================
+Exercício 2: Emprego Científico (Interface)
+---------------------------------------------------------------
+
+Para a comunicação entre esta aplicação e a primeira, que será a API de dados, foi utilizado o modulo
+'axios'.
+Todas as funcionalidades pedidas apresenta-se funcionais.
+
+===============================================================
+
+Execução das aplicações desenvolvidas:
+    Em cada diretoria correr os comandos:
+        npm i
+        npm start
+    (a segunda aplicação(ex2) precisa da primeira(ex1) pelo que esta deverá ser corrida primeiro)

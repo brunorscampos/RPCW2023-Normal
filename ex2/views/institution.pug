@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  .w3-card-4
+    header.w3-container.w3-blue
+      h1 
+        i.fa.fa-home.clickable(onclick="window.location='/'" style='cursor:pointer;') 
+        | #{inst[0].NomeInstituicao}
+      h2=inst[0].NIPCInstituicao
+    .w3-container
+      h2 Contratos
+      table.w3-table-all(id="myTable")
+        thead
+          tr
+            th _id
+            th DataInicioContrato
+            th DataFimContrato
+            th AreasInvestigacao
+        tbody
+          each c in inst 
+            tr
+              td
+                a(href="/" + c._id) #{c._id}
+              td= c.DataInicioContrato
+              td= c.DataFimContrato
+              td= c.AreasInvestigacao
+    footer.w3-container.w3-blue.w3-center
+      h5 Generated for RPCW2023 in #{d}
